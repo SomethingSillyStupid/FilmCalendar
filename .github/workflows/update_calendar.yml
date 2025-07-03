@@ -1,0 +1,33 @@
+name: Update Vidiots Calendar
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'  # Every Sunday at 2am UTC
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Generate calendar
+      run: python generate_calendar.py
+
+    - name: Commit & Push
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add vidiots_calendar.ics
+        git commit -m "Update calendar"
+        git push
